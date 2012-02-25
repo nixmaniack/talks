@@ -136,24 +136,9 @@
 
 \end{frame}
 
-\subsection{Step 1: Download upstream tarball}
+\subsection{Step 1: Setting up your BASH environment}
 
-\begin{frame}[fragile]{Step 1: Download upstream tarball}
-\lstset{breaklines=true}
-\lstset{makemacrouse=true}
-\begin{lstlisting}
-
-$ mkdir ~/packaging
-$ cd ~/packaging
-$ wget http://download.savannah.gnu.org/releases/smc/hyphenation/patterns/hyphen-as-0.7.0.tar.bz2
-    \end{lstlisting} 
-\end{frame}
-
-
-
-\subsection{Step 2: Setting up your BASH environment}
-
-\begin{frame}[fragile]{Step 2: Setting up your BASH environment}
+\begin{frame}[fragile]{Step 1: Setting up your BASH environment}
 \lstset{breaklines=true}
 \lstset{makemacrouse=true}
 Add the following lines to ~/.bashrc
@@ -167,6 +152,19 @@ export $DEBFULLNAME $DEBEMAIL
     \end{lstlisting} 
 \end{frame}
 
+
+\subsection{Step 2: Download upstream tarball}
+
+\begin{frame}[fragile]{Step 2: Download upstream tarball}
+\lstset{breaklines=true}
+\lstset{makemacrouse=true}
+\begin{lstlisting}
+
+$ mkdir ~/packaging
+$ cd ~/packaging
+$ wget http://download.savannah.gnu.org/releases/smc/hyphenation/patterns/hyphen-as-0.7.0.tar.bz2
+    \end{lstlisting} 
+\end{frame}
 
 
 
