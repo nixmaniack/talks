@@ -123,6 +123,7 @@
 
 \begin{frame}{Creating Debian Package Steps}
 \begin{enumerate}
+	\item Setting up your BASH environment
 	\item Download the upstream tarball
 	\item Rename the upstream tarball
 	\item Unpack the upstream tarball
@@ -149,27 +150,21 @@ $ wget http://download.savannah.gnu.org/releases/smc/hyphenation/patterns/hyphen
 \end{frame}
 
 
-\begin{frame}[fragile]{The Deb package format}
-  \begin{itemize}
-  \item \texttt{.deb} file: an \texttt{ar} archive
-    \begin{lstlisting}[basicstyle=\ttfamily\footnotesize]
-$ ar tv wget_1.12-2.1_i386.deb
-rw-r--r-- 0/0      4 Sep  5 15:43 2010 debian-binary
-rw-r--r-- 0/0   2403 Sep  5 15:43 2010 control.tar.gz
-rw-r--r-- 0/0 751613 Sep  5 15:43 2010 data.tar.gz
-    \end{lstlisting} % $
-    \begin{itemize}
-    \item \texttt{debian-binary}: version of the deb file format, \texttt{"2.0\textbackslash{}n"}
-    \item \texttt{control.tar.gz}: metadata about the package\\
-      {\small \texttt{\textbf{control}, md5sums, (pre|post)(rm|inst), triggers, shlibs}, \ldots}
-    \item \texttt{data.tar.gz}: data files of the package
-    \end{itemize}
-  \end{itemize}
 
+\subsection{Step 2: Setting up your BASH environment}
+
+\begin{frame}[fragile]{Step 2: Setting up your BASH environment}
+\lstset{breaklines=true}
+\lstset{makemacrouse=true}
+\begin{lstlisting}
+Add the following lines to ~/.bashrc
+[replace the valuse with Your full name and email address]
+
+DEBEMAIL="abdulkarimmemon@gmail.com"
+DEBFULLNAME="AbdulKarim Memon"
+export $DEBFULLNAME $DEBEMAIL
+    \end{lstlisting} 
 \end{frame}
-
-
-
 
 
 
