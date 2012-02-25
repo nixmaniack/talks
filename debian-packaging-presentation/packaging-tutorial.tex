@@ -139,17 +139,27 @@
 \subsection{Step 1: Setting up your BASH environment}
 
 \begin{frame}[fragile]{Step 1: Setting up your BASH environment}
-\lstset{breaklines=true}
-\lstset{makemacrouse=true}
-Add the following lines to ~/.bashrc
+\lstset{
+    literate={~} {$\sim$}{1},
+    breaklines=true
+}
+\begin{itemize}
+\item Append the following lines to \lstinline|~/.bashrc| \newline
 [replace the values with Your full name and email address]
+
 \begin{lstlisting}
-
-
 DEBEMAIL="abdulkarimmemon@gmail.com"
 DEBFULLNAME="AbdulKarim Memon"
 export $DEBFULLNAME $DEBEMAIL
     \end{lstlisting} 
+
+\item Restart your terminal or execute following in the terminal.
+
+\begin{lstlisting}
+$ source ~/.bashrc
+\end{lstlisting}
+
+\end{itemize}
 \end{frame}
 
 
@@ -157,7 +167,6 @@ export $DEBFULLNAME $DEBEMAIL
 
 \begin{frame}[fragile]{Step 2: Download upstream tarball}
 \lstset{breaklines=true}
-\lstset{makemacrouse=true}
 \begin{lstlisting}
 
 $ mkdir ~/packaging
@@ -166,8 +175,13 @@ $ wget http://download.savannah.gnu.org/releases/smc/hyphenation/patterns/hyphen
     \end{lstlisting} 
 \end{frame}
 
+\subsection{Rename the upstream tarball}
+
+\begin{frame}{Rename the upstream tarball}
+\textbf{Rename the tarball to \texttt{<package\_name>\_<version>.orig.tar.bz2}}
 
 
+\end{frame}
 
 
 
