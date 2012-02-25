@@ -1,0 +1,165 @@
+\documentclass[red,10pt,a4paper]{beamer}
+\usetheme{debian}
+%\usepackage{beamerthemesplit}
+%\usepackage{beamerthemeshadow}
+%\setbeamercolor{background canvas}{bg=black}
+
+%\setbeamercolor{normal text}{fg=white}
+
+% Set slide numbers in footer
+%\setbeamertemplate{footline}[frame number]
+
+% Remove navigation symbols
+%\setbeamertemplate{navigation symbols}{}
+
+\usepackage{debiantutorial}
+
+
+
+\usepackage[utf8]{inputenc}
+\title{Debian Packaging Tutorial}
+\subtitle{Magic that makes "\texttt{apt-get install}" work}
+\author[Muneeb]{Muneeb Shaikh \\ \texttt{iammuneeb@gmail.com}}
+\date{\today}
+
+\begin{document}
+
+
+% -- Title --
+\begin{frame}
+    \titlepage
+\end{frame}
+
+
+
+
+\begin{frame}{Outline}
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\section{General Installation Procedure}
+\subsection{From Source}
+
+\begin{frame}{From Source}
+	\begin{itemize}
+		\item Download the source from upstream
+			\br
+		\item Read the installation instructions
+			\br
+		\item Hunt for the pre-requisites of installing (Download Dependencies)
+			\br
+		\item Finally install with these commands
+			\begin{enumerate}
+				\item \texttt{./configure}
+					\hbr
+				\item \texttt{make}
+					\hbr
+				\item \texttt{make install}
+			\end{enumerate}
+	\end{itemize}
+\end{frame}
+
+\subsection{From Repository}
+
+\begin{frame}{From Repository}
+\begin{center}
+\large{\texttt{sudo apt-get install package\_name}}
+\end{center}
+\end{frame}
+
+\section{Packaging}
+
+\subsection{Tools of Trade}
+\begin{frame}{Tools of Trade}
+  \begin{itemize}
+  \item A Debian (or Ubuntu) system (with root access)
+    \br
+  \item Some packages:
+    \begin{itemize}
+    \item \textbf{build-essential}: contains basic building tools such as 
+    \textbf{gcc, g++, make} and mainly \textbf{dpkg-dev}, which contains basic
+        Debian-specific tools to create packages
+     
+      \hbr
+    \item \textbf{devscripts}: contains many useful scripts for Debian maintainers
+    \hbr
+    \item \textbf{dh-make}: tool to Debianize the upstream source easily
+    \hbr
+    \item \textbf{lintian}: Debian package checker
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\subsection{General packaging workflow}
+\begin{frame}{General packaging workflow}
+  \begin{center}
+    \begin{tikzpicture}[
+      node1/.style={shape=rectangle,draw=rouge,fill=debianbackgroundblue,thick},
+      arr/.style={very thick}, command/.style={text=rouge,font=\ttfamily}, ]
+      
+      \node[node1] (www) at (0, 0) {Web};
+      \node[node1] (us) at (2.5, 0) {upstream source};
+      \node[node1] (da) at (-2.5, 0) {Debian mirror};
+      \node[node1] (sp) at (0, -2) {source package};
+      \draw[arr,<-,dashed,thick] (sp) -- (2.5,-2) node[right=0cm,text width=2.98cm,text centered,font=\small\sl] {where most of the manual work is done};
+      \node[node1] (bin) at (0, -4) {one or several binary packages};
+      \draw[arr,<-,dashed,thick] (bin) -- (3.5,-4) node[right,text centered,font=\small\ttfamily\sl] {.deb\normalfont};
+      \draw[arr,->] (us) -- (sp) node[pos=0.5,right,command] {dh\_make};
+      \draw[arr,->] (da) -- (sp) node[pos=0.5,left,command] {apt-get source};
+      \draw[arr,->] (www) -- (sp) node[pos=0.5,left,command] {dget};
+      \draw[arr,->] (sp) -- (bin) node[pos=0.5,right,text width=6cm] {\textttc{debuild} (build and test with \textttc{lintian}) or \textttc{dpkg-buildpackage}};
+      \draw[arr,->] (bin) -- (1,-6) node[pos=0.5,right] {install (\textttc{debi})};
+      %	\draw[arr,->] (bin) -- (-1,-6) node[pos=0.5,left] {upload (\textttc{dput})};
+      \draw[transparent] (bin) -- (-1,-6) node[pos=0.5,left,opaque] {upload (\textttc{dput})};
+      \draw[arr,->,rounded corners] (bin) -- (-1,-6) -- (-4.5,-6) -- (-4.5,0) -- (da);
+      \useasboundingbox (-4,-6) rectangle (6,0); % hack hack hack
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{The Deb package format}
+  \begin{itemize}
+  \item \texttt{.deb} file: an \texttt{ar} archive
+    \begin{lstlisting}[basicstyle=\ttfamily\footnotesize]
+$ ar tv wget_1.12-2.1_i386.deb
+rw-r--r-- 0/0      4 Sep  5 15:43 2010 debian-binary
+rw-r--r-- 0/0   2403 Sep  5 15:43 2010 control.tar.gz
+rw-r--r-- 0/0 751613 Sep  5 15:43 2010 data.tar.gz
+    \end{lstlisting} % $
+    \begin{itemize}
+    \item \texttt{debian-binary}: version of the deb file format, \texttt{"2.0\textbackslash{}n"}
+    \item \texttt{control.tar.gz}: metadata about the package\\
+      {\small \texttt{\textbf{control}, md5sums, (pre|post)(rm|inst), triggers, shlibs}, \ldots}
+    \item \texttt{data.tar.gz}: data files of the package
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
