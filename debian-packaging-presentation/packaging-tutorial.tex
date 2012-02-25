@@ -118,6 +118,35 @@
 \end{frame}
 
 
+\section{Creating Debian Package Steps}
+\subsection{Steps}
+
+\begin{frame}{Creating Debian Package Steps}
+\begin{enumerate}
+	\item Download the upstream tarball
+	\item Rename the upstream tarball
+	\item Unpack the upstream tarball
+	\item Add the Debian packaging files
+	\item Build the package
+	\item Check for errors
+	\item Install the package
+	\item If everything is working as expected upload it to \structure{\url{mentors.debian.net}}
+\end{enumerate}
+
+\end{frame}
+
+\subsection{Step 1: Download upstream tarball}
+
+\begin{frame}[fragile]{Step 1: Download upstream tarball}
+\lstset{breaklines=true}
+\lstset{makemacrouse=true}
+\begin{lstlisting}
+
+$ mkdir ~/packaging
+$ cd ~/packaging
+$ wget http://download.savannah.gnu.org/releases/smc/hyphenation/patterns/hyphen-as-0.7.0.tar.bz2
+    \end{lstlisting} 
+\end{frame}
 
 
 \begin{frame}[fragile]{The Deb package format}
