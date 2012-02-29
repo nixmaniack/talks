@@ -2,11 +2,11 @@ This TnT is part of Muneeb's Presentation Tips and Tricks.
 You can find more TnTs at https://github.com/iammuneeb/talks/
 
 Created-on: 01 Mar 2012 04:08:59 AM 
-Last-modified: 01 Mar 2012 04:30:42 AM
+Last-modified: 01 Mar 2012 04:38:51 AM
 
 Description:    This TnT shows how you can clone the session from one terminal
                 to other terminal. This setup is helpful when you don't want
-                the audience to see irrelevvant commands which you want to test
+                the audience to see irrelevant commands which you want to test
                 in some other terminal. 
 ================================================================================
 
