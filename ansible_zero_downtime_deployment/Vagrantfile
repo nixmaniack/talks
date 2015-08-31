@@ -1,0 +1,42 @@
+domain   = '.blackocean.local'
+
+nodes = [
+  { hostname: 'web1',    ip: '172.16.3.15', box: 'centos7' },
+  { hostname: 'web2',    ip: '172.16.3.16', box: 'centos7' },
+  { hostname: 'db1',     ip: '172.16.3.17', box: 'centos7', ram: 256 },
+  { hostname: 'lb1',     ip: '172.16.3.18', box: 'centos7', ram: 256 },
+  { hostname: 'nagios',  ip: '172.16.3.19', box: 'centos7', ram: 256 },
+  # { hostname: 'web3',    ip: '172.16.3.20', box: 'centos7' }
+]
+
+Vagrant.configure('2') do |config|
+  nodes.each do |node|
+    config.vm.define node[:hostname] do |nodeconfig|
+      nodeconfig.vm.box = 'centos7'
+      nodeconfig.vm.hostname = node[:hostname] + domain
+      nodeconfig.vm.network :private_network, ip: node[:ip]
+      # nodeconfig.vm.network :public_network, type: 'dhcp', bridge: 'ra0'
+
+      memory = node[:ram] ? node[:ram] : 128
+      cpus   = node[:cpus] ? node[:cpus] : 1
+      nodeconfig.vm.provider :virtualbox do |vb|
+        vb.cpus = cpus
+        vb.customize [
+          'modifyvm', :id,
+          '--cpuexecutioncap', '70',
+          '--memory', memory.to_s
+        ]
+      end
+
+      config.vm.provision :shell do |s|
+        ssh_pub_key = File.readlines("#{Dir.home}/.ssh/id_rsa.pub").first.strip
+        s.inline = <<-SHELL
+          echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+          mkdir -p /root/.ssh && chmod 700 /root/.ssh
+          echo #{ssh_pub_key} >> /root/.ssh/authorized_keys
+          chmod 600 /root/.ssh/authorized_keys
+        SHELL
+      end
+    end
+  end
+end

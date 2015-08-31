@@ -1,0 +1,126 @@
+#+Title: Zero Downtime Deployments using Ansible
+#+Author: Muneeb Shaikh
+#+Email: @nixmaniack
+
+#+OPTIONS: reveal_center:t reveal_progress:t reveal_history:nil reveal_control:t
+#+OPTIONS: reveal_mathjax:t reveal_rolling_links:t reveal_keyboard:t reveal_overview:t num:nil
+#+OPTIONS: reveal_width:1200 reveal_height:800
+#+OPTIONS: toc:1
+#+REVEAL_MARGIN: 0.1
+#+REVEAL_MIN_SCALE: 0.5
+#+REVEAL_MAX_SCALE: 2.5
+#+REVEAL_TRANS: cube
+#+REVEAL_THEME: night
+#+REVEAL_HLEVEL: 2
+#+REVEAL_HEAD_PREAMBLE: <meta name="description" content="Zero Downtime Deployments using Ansible">
+#+REVEAL_POSTAMBLE: <p> Created by Muneeb. </p>
+#+REVEAL_PLUGINS: (markdown notes)
+#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0
+
+* Brief Introduction to Ansible
+
+  - Server Configuration Management, Orchestration and Deployment
+  - *Agentless* 
+  - Uses SSH
+  - Simple and Powerful
+
+* Key Terms and Concepts
+
+#+begin_notes
+
+The talk mostly conists of demo, so nothing much in the slides.
+
+#+end_notes
+** Inventory
+
+  - List of hosts managed by Ansible
+  - Static and Dynamic
+  - Groups
+
+*** Example Inventory List
+
+#+begin_src ini
+
+[webservers]
+web1.example.com
+web2.example.com
+web3.example.com
+
+[dbservers]
+db1.example.com
+
+[lbservers]
+lb1.example.com
+
+[monitoring]
+nagios.example.com
+
+#+end_src
+
+** Playbooks
+
+  - Policy you want your remote system to enforce
+  - Set of steps in general IT process
+  - *Playbooks* contain *Plays*
+    + *Plays* contain *Tasks*
+      * *Tasks* call *Modules*
+ 
+** Plays
+
+ - Set of Tasks
+ - Applied against a group
+ - e.g. installing Nginx on webservers and MySQL on dbservers
+
+** Tasks and Modules
+
+ - Tasks call modules to perform operation or change configuration
+ - Idempotent changes
+   
+*** Example Playbook
+   
+#+begin_src yaml
+
+---
+- name: Setup web servers
+  hosts: webservers
+
+  tasks:
+  - name: Install nginx
+    yum: name=nginx state=present
+
+  - name: Configure nginx
+    template: src=nginx_conf.j2 dest=/etc/nginx/nginx.conf
+    notify: reload nginx
+ 
+  - name: Start nginx
+    service: name=nginx state=started enabled=yes
+
+  handlers:
+  - name: reload nginx
+    service: name=nginx state=reloaded
+
+#+end_src
+
+** Handlers
+
+ - Tasks that get run on trigger
+ - At the end of a Play and only once
+
+** Roles
+
+ - Organization and reuse of Tasks
+ - Follows a file structure
+  
+* Zero Downtime, Rolling Update
+
+   - Web servers behind Load Balancer
+   
+* Demo
+
+  - Based on Ansible Examples - LAMP+HAProxy Deployment
+  - https://github.com/ansible/ansible-examples/tree/master/lamp_haproxy
+
+* Questions?
+* Thanks!
+
+Follow me [[https://twitter.com/nixmaniack][@nixmaniack]]

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Zero Downtime Deployments using Ansible</title>
+<meta name="author" content="(Muneeb Shaikh)"/>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/night.css" id="theme"/>
+<link rel="stylesheet" href=""/>
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<meta name="description" content="Zero Downtime Deployments using Ansible">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1>Zero Downtime Deployments using Ansible</h1>
+<h2>Muneeb Shaikh</h2>
+<h2><a href="mailto:@nixmaniack">@nixmaniack</a></h2>
+<h2></h2>
+</section>
+<section id="table-of-contents">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#/slide-orgheadline1">Brief Introduction to Ansible</a></li>
+<li><a href="#/slide-orgheadline10">Key Terms and Concepts</a></li>
+<li><a href="#/slide-orgheadline11">Zero Downtime, Rolling Update</a></li>
+<li><a href="#/slide-orgheadline12">Demo</a></li>
+<li><a href="#/slide-orgheadline13">Questions?</a></li>
+<li><a href="#/slide-orgheadline14">Thanks!</a></li>
+</ul>
+</div>
+</div>
+</section>
+
+<section>
+<section id="slide-orgheadline1">
+<h2 id="orgheadline1">Brief Introduction to Ansible</h2>
+<ul>
+<li>Server Configuration Management, Orchestration and Deployment</li>
+<li><b>Agentless</b></li>
+<li>Uses SSH</li>
+<li>Simple and Powerful</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline10">
+<h2 id="orgheadline10">Key Terms and Concepts</h2>
+<aside class="notes">
+<p>
+The talk mostly conists of demo, so nothing much in the slides.
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline3">
+<h3 id="orgheadline3">Inventory</h3>
+<ul>
+<li>List of hosts managed by Ansible</li>
+<li>Static and Dynamic</li>
+<li>Groups</li>
+
+</ul>
+
+</section>
+<section id="slide-orgheadline2">
+<h4 id="orgheadline2">Example Inventory List</h4>
+<div class="org-src-container">
+
+<pre  class="src src-ini">[webservers]
+web1.example.com
+web2.example.com
+web3.example.com
+
+[dbservers]
+db1.example.com
+
+[lbservers]
+lb1.example.com
+
+[monitoring]
+nagios.example.com
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline4">
+<h3 id="orgheadline4">Playbooks</h3>
+<ul>
+<li>Policy you want your remote system to enforce</li>
+<li>Set of steps in general IT process</li>
+<li><b>Playbooks</b> contain <b>Plays</b>
+<ul>
+<li><b>Plays</b> contain <b>Tasks</b>
+<ul>
+<li><b>Tasks</b> call <b>Modules</b></li>
+
+</ul></li>
+
+</ul></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline5">
+<h3 id="orgheadline5">Plays</h3>
+<ul>
+<li>Set of Tasks</li>
+<li>Applied against a group</li>
+<li>e.g. installing Nginx on webservers and MySQL on dbservers</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline7">
+<h3 id="orgheadline7">Tasks and Modules</h3>
+<ul>
+<li>Tasks call modules to perform operation or change configuration</li>
+<li>Idempotent changes</li>
+
+</ul>
+
+</section>
+<section id="slide-orgheadline6">
+<h4 id="orgheadline6">Example Playbook</h4>
+<div class="org-src-container">
+
+<pre  class="src src-yaml"><span style="color: #8B8989; font-style: italic;">---</span>
+- <span style="color: #D8FA3C;">name</span>: Setup web servers
+  <span style="color: #D8FA3C;">hosts</span>: webservers
+
+  <span style="color: #D8FA3C;">tasks</span>:
+  - <span style="color: #D8FA3C;">name</span>: Install nginx
+    <span style="color: #D8FA3C;">yum</span>: name=nginx state=present
+
+  - <span style="color: #D8FA3C;">name</span>: Configure nginx
+    <span style="color: #D8FA3C;">template</span>: src=nginx_conf.j2 dest=/etc/nginx/nginx.conf
+    <span style="color: #D8FA3C;">notify</span>: reload nginx
+
+  - <span style="color: #D8FA3C;">name</span>: Start nginx
+    <span style="color: #D8FA3C;">service</span>: name=nginx state=started enabled=yes
+
+  <span style="color: #D8FA3C;">handlers</span>:
+  - <span style="color: #D8FA3C;">name</span>: reload nginx
+    <span style="color: #D8FA3C;">service</span>: name=nginx state=reloaded
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline8">
+<h3 id="orgheadline8">Handlers</h3>
+<ul>
+<li>Tasks that get run on trigger</li>
+<li>At the end of a Play and only once</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline9">
+<h3 id="orgheadline9">Roles</h3>
+<ul>
+<li>Organization and reuse of Tasks</li>
+<li>Follows a file structure</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline11">
+<h2 id="orgheadline11">Zero Downtime, Rolling Update</h2>
+<ul>
+<li>Web servers behind Load Balancer</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline12">
+<h2 id="orgheadline12">Demo</h2>
+<ul>
+<li>Based on Ansible Examples - LAMP+HAProxy Deployment</li>
+<li><a href="https://github.com/ansible/ansible-examples/tree/master/lamp_haproxy">https://github.com/ansible/ansible-examples/tree/master/lamp_haproxy</a></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline13">
+<h2 id="orgheadline13">Questions?</h2>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline14">
+<h2 id="orgheadline14">Thanks!</h2>
+<p>
+Follow me <a href="https://twitter.com/nixmaniack">@nixmaniack</a>
+</p>
+</section>
+</section>
+</div>
+</div>
+<p> Created by Muneeb. </p>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: true,
+rollingLinks: true,
+keyboard: true,
+overview: true,
+width: 1200,
+height: 800,
+margin: 0.10,
+minScale: 0.50,
+maxScale: 2.50,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'cube', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+});
+</script>
+</body>
+</html>
