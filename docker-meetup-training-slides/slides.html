@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Getting Started with Docker</title>
+<meta name="author" content="(Muneeb Shaikh)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/night.css" id="theme"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+<meta name="description" content="Getting Started with Docker">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1>Getting Started with Docker</h1>
+<h2>Muneeb Shaikh</h2>
+<h2><a href="mailto:@nixmaniack">@nixmaniack</a></h2>
+<h2></h2>
+</section>
+<section id="table-of-contents">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#/slide-orgheadline4">Brief Introduction to Docker</a></li>
+<li><a href="#/slide-orgheadline7">Playing with Alpine</a></li>
+<li><a href="#/slide-orgheadline14">Webapps with Docker</a></li>
+<li><a href="#/slide-orgheadline17">Hands On/Training</a></li>
+<li><a href="#/slide-orgheadline18">Next Steps: Docker Birthday #3 App Challenge</a></li>
+<li><a href="#/slide-orgheadline19">Questions?</a></li>
+<li><a href="#/slide-orgheadline20">Thanks!</a></li>
+</ul>
+</div>
+</div>
+</section>
+
+
+<section>
+<section id="slide-orgheadline4">
+<h2 id="orgheadline4">Brief Introduction to Docker</h2>
+<div class="outline-text-2" id="text-orgheadline4">
+</div></section>
+</section>
+<section>
+<section id="slide-orgheadline1">
+<h3 id="orgheadline1">What is Docker?</h3>
+<aside class="notes">
+<p>
+Docker Engine is a tool that allows developers, sys-admins etc. to easily
+deploy their applications in a sandbox (called containers) to run on the host
+operating system i.e. Linux. The key benefit of Docker Engine is that it
+allows users to package an application with all of its dependencies into a
+standardized unit for software development. Unlike virtual machines,
+containers do not have the overhead of a full operating system and hence
+enable more efficient usage of the underlying system and resources.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline2">
+<h3 id="orgheadline2">What are containers?</h3>
+<aside class="notes">
+<p>
+The industry standard today is to use Virtual Machines (VMs) to run software
+applications. VMs run applications inside a guest Operating System, which
+runs on virtual hardware powered by the server’s host OS.
+</p>
+
+<p>
+VMs are great at providing full operating system isolation for applications:
+there are very few ways a problem in the host operating system can affect the
+software running in the guest operating system, and vice-versa. But this
+isolation comes at great cost — the computational overhead spent virtualizing
+hardware for a guest OS to use is substantial.
+</p>
+
+<p>
+Containers take a different approach: by leveraging the low-level mechanics
+of the host operating system, containers provide most of the isolation of
+virtual machines at a fraction of the computing power.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline3">
+<h3 id="orgheadline3">What will this tutorial teach me?</h3>
+<aside class="notes">
+<p>
+This tutorial aims to be the one-stop shop for getting your hands dirty with
+Docker. Apart from demystifying the Docker landscape, it'll give you hands-on
+experience with building and deploying your own webapps. You'll quickly build
+a multi-container voting app using multiple languages. Even if you have no
+prior experience with deployments, this tutorial should be all you need to
+get started.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline7">
+<h2 id="orgheadline7">Playing with Alpine</h2>
+<aside class="notes">
+<p>
+Now that you have everything setup, it's time to get our hands dirty. In this
+section, you are going to run a Alpine Linux container (a lightweight linux
+distribution) on our system and get a taste of the docker run command.
+</p>
+
+</aside>
+
+<div class="org-src-container">
+
+<pre  class="src src-bash">$ docker pull alpine
+
+$ docker images
+REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE
+python                            <span style="color: #AE81FF;">2.7</span>                 e4a554df875e        <span style="color: #AE81FF;">8</span> days ago          <span style="color: #AE81FF;">676.8</span> MB
+mhart/alpine-node                 latest              d7e82cd9fae1        <span style="color: #AE81FF;">9</span> days ago          <span style="color: #AE81FF;">37.41</span> MB
+python                            <span style="color: #AE81FF;">2.7-alpine</span>          dd22f748f304        <span style="color: #AE81FF;">13</span> days ago         <span style="color: #AE81FF;">72.59</span> MB
+seqvence/static-site              latest              f589ccde7957        <span style="color: #AE81FF;">2</span> weeks ago         <span style="color: #AE81FF;">190.5</span> MB
+manomarks/worker                  latest              <span style="color: #AE81FF;">80ac8879211a</span>        <span style="color: #AE81FF;">2</span> weeks ago         <span style="color: #AE81FF;">184.5</span> MB
+postgres                          <span style="color: #AE81FF;">9.4</span>                 <span style="color: #AE81FF;">25add771b79e</span>        <span style="color: #AE81FF;">2</span> weeks ago         <span style="color: #AE81FF;">263.6</span> MB
+centos                            latest              d0e7f81ca65c        <span style="color: #AE81FF;">4</span> weeks ago         <span style="color: #AE81FF;">196.6</span> MB
+redis                             alpine              <span style="color: #AE81FF;">50405530a7e5</span>        <span style="color: #AE81FF;">4</span> weeks ago         <span style="color: #AE81FF;">15.95</span> MB
+alpine                            latest              <span style="color: #AE81FF;">70c557e50ed6</span>        <span style="color: #AE81FF;">4</span> weeks ago         <span style="color: #AE81FF;">4.794</span> MB
+nginx                             latest              fb7fe53bd952        <span style="color: #AE81FF;">12</span> weeks ago        <span style="color: #AE81FF;">133.8</span> MB
+centos                            <span style="color: #AE81FF;">7.2.1511</span>            <span style="color: #AE81FF;">38ea04e19303</span>        <span style="color: #AE81FF;">3</span> months ago        <span style="color: #AE81FF;">194.6</span> MB
+fedora                            latest              <span style="color: #AE81FF;">7f514965bc71</span>        <span style="color: #AE81FF;">4</span> months ago        <span style="color: #AE81FF;">204</span> MB
+ubuntu                            latest              <span style="color: #AE81FF;">4b1e42b414f6</span>        <span style="color: #AE81FF;">4</span> months ago        <span style="color: #AE81FF;">187.9</span> MB
+hello-world                       latest              <span style="color: #AE81FF;">690ed74de00f</span>        <span style="color: #AE81FF;">5</span> months ago        <span style="color: #AE81FF;">960</span> B
+cirros                            latest              <span style="color: #AE81FF;">050a75127733</span>        <span style="color: #AE81FF;">5</span> months ago        <span style="color: #AE81FF;">7.694</span> MB
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline5">
+<h3 id="orgheadline5">Docker Run</h3>
+<div class="org-src-container">
+
+<pre  class="src src-bash">$ docker run alpine ls -l
+total <span style="color: #AE81FF;">48</span>
+drwxr-xr-x    <span style="color: #AE81FF;">2</span> root     root          <span style="color: #AE81FF;">4096</span> Mar  <span style="color: #AE81FF;">2</span> <span style="color: #AE81FF;">16:20</span> bin
+drwxr-xr-x    <span style="color: #AE81FF;">5</span> root     root           <span style="color: #AE81FF;">360</span> Mar <span style="color: #AE81FF;">18</span> <span style="color: #AE81FF;">09:47</span> dev
+drwxr-xr-x   <span style="color: #AE81FF;">13</span> root     root          <span style="color: #AE81FF;">4096</span> Mar <span style="color: #AE81FF;">18</span> <span style="color: #AE81FF;">09:47</span> etc
+drwxr-xr-x    <span style="color: #AE81FF;">2</span> root     root          <span style="color: #AE81FF;">4096</span> Mar  <span style="color: #AE81FF;">2</span> <span style="color: #AE81FF;">16:20</span> home
+drwxr-xr-x    <span style="color: #AE81FF;">5</span> root     root          <span style="color: #AE81FF;">4096</span> Mar  <span style="color: #AE81FF;">2</span> <span style="color: #AE81FF;">16:20</span> lib
+......
+......
+
+$ docker run alpine echo <span style="color: #E6DB74; font-style: italic;">"hello from alpine"</span>
+hello from alpine
+
+$ docker run alpine uptime
+<span style="color: #AE81FF;">00:16:48</span> up  <span style="color: #AE81FF;">1:48,</span>  <span style="color: #AE81FF;">0</span> users,  load average: <span style="color: #AE81FF;">0.00,</span> <span style="color: #AE81FF;">0.01,</span> <span style="color: #AE81FF;">0.04</span>
+
+$ docker run alpine /bin/sh
+
+$ docker ps
+
+$ docker run -it alpine /bin/sh
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline6">
+<h3 id="orgheadline6">Keywords, Terminology</h3>
+<dl>
+<dt>Images</dt><dd>The Filesystem and configuration of our application which are
+used to create containers. To find out more about a Docker image, run
+docker inspect alpine. In the demo above, you used the docker pull
+command to download the alpine image. When you executed the command
+docker run hello-world, it also did a docker pull behind the scenes to
+download the hello-world image.</dd>
+<dt>Containers</dt><dd>Created using Docker images and run the actual application.
+You created a container using docker run which you did using the alpine
+image that you downloaded. A list of running containers can be seen
+using the docker ps command.</dd>
+
+</dl>
+
+</section>
+<section>
+
+<dl>
+<dt>Docker daemon</dt><dd>The background service running on the host that manages
+building, running and distributing Docker containers.</dd>
+<dt>Docker client</dt><dd>The command line tool that allows the user to interact
+with the Docker daemon.</dd>
+<dt>Docker Hub</dt><dd>A registry of Docker images. You can think of the registry as
+a directory of all available Docker images. You'll be using this later
+in this tutorial.</dd>
+
+</dl>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline14">
+<h2 id="orgheadline14">Webapps with Docker</h2>
+<div class="outline-text-2" id="text-orgheadline14">
+</div></section>
+</section>
+<section>
+<section id="slide-orgheadline8">
+<h3 id="orgheadline8">Static Sites</h3>
+<pre class="example">
+$ docker run --name static-site -e AUTHOR="Your Name" -d -P seqvence/static-site
+e61d12292d69556eabe2a44c16cbd54486b2527e2ce4f95438e504afb7b02810
+
+$ docker port static-site
+443/tcp -&gt; 0.0.0.0:32772
+80/tcp -&gt; 0.0.0.0:32773
+
+$ docker-machine ip default # for mac/windows
+192.168.99.100
+</pre>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline9">
+<h3 id="orgheadline9">Docker Images</h3>
+<dl>
+<dt>Base Image</dt><dd>OS Images, No parent</dd>
+<dt>Child Images</dt><dd>Built on base images</dd>
+
+</dl>
+
+
+<ul>
+<li>Official vs User</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline11">
+<h3 id="orgheadline11">Our First Image</h3>
+<p>
+Our goal in this section will be to create an image that sandboxes a small
+Flask application
+</p>
+
+<dl>
+<dt>Dockerfile</dt><dd>a text-file that contains a list of commands that the Docker
+daemon calls while creating an image. It is simple way to automate the
+image creation process.</dd>
+<dt>app.py</dt><dd></dd>
+
+<dt>requirements.txt</dt><dd></dd>
+
+<dt>templates/index.html</dt><dd></dd>
+
+</dl>
+
+</section>
+<section id="slide-orgheadline10">
+<h4 id="orgheadline10">Dockerfile</h4>
+<pre class="example">
+# our base image
+FROM alpine:latest
+
+# Install python and pip
+RUN apk add --update py-pip
+
+# install Python modules needed by the Python app
+COPY requirements.txt /usr/src/app/
+RUN pip install --no-cache-dir -r /usr/src/app/requirements.txt
+
+# copy files required for the app to run
+COPY app.py /usr/src/app/
+COPY templates/index.html /usr/src/app/templates/
+
+# tell the port number the container should expose
+EXPOSE 5000
+
+# run the application
+CMD ["python", "/usr/src/app/app.py"]
+</pre>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline12">
+<h3 id="orgheadline12">Build image</h3>
+<pre class="example">
+$ docker build -t &lt;YOUR_USERNAME&gt;/myfirstapp .
+Sending build context to Docker daemon 9.728 kB
+Step 1 : FROM alpine:latest
+---&gt; 0d81fc72e790
+...
+...
+Step 8 : CMD python /usr/src/app/app.py
+---&gt; Running in 78e324d26576
+---&gt; 2f7357a0805d
+Removing intermediate container 78e324d26576
+Successfully built 2f7357a0805d
+</pre>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline13">
+<h3 id="orgheadline13">Run Container</h3>
+<pre class="example">
+$ docker run -p 8888:5000 --name myfirstapp YOUR_USERNAME/myfirstapp
+ * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+</pre>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline17">
+<h2 id="orgheadline17">Hands On/Training</h2>
+<pre class="example">
+$ docker login
+</pre>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline15">
+<h3 id="orgheadline15">Get the voting-app</h3>
+<pre class="example">
+$ git clone https://github.com/docker/docker-birthday-3.git
+</pre>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline16">
+<h3 id="orgheadline16">Customize the app</h3>
+<ol>
+<li>Modify app.py - example-voting-app/voting-app</li>
+<li>Modify config.json - example-voting-app/result-app/views</li>
+<li><p>
+Running your app
+</p>
+<pre class="example">
+$ docker-compose up -d
+</pre></li>
+<li><p>
+Build, tag and push images
+</p>
+<pre class="example">
+$ docker build --no-cache -t &lt;YOUR_DOCKER_ID&gt;/votingapp_voting-app .
+...
+$ docker build --no-cache -t &lt;YOUR_DOCKER_ID&gt;/votingapp_result-app .
+...
+</pre></li>
+<li><p>
+Push images to Docker Hub
+</p>
+<pre class="example">
+$ docker push &lt;YOUR_DOCKER_ID&gt;/votingapp_voting-app
+...
+$ docker push &lt;YOUR_DOCKER_ID&gt;/votingapp_result-app
+...
+</pre></li>
+<li>Confirm your completion</li>
+
+</ol>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline18">
+<h2 id="orgheadline18">Next Steps: Docker Birthday #3 App Challenge</h2>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline19">
+<h2 id="orgheadline19">Questions?</h2>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline20">
+<h2 id="orgheadline20">Thanks!</h2>
+<p>
+Follow me <a href="https://twitter.com/nixmaniack">@nixmaniack</a>
+</p>
+</section>
+</section>
+</div>
+</div>
+<p> Created by Muneeb. </p>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: true,
+keyboard: true,
+overview: true,
+width: 1200,
+height: 800,
+margin: 0.10,
+minScale: 0.50,
+maxScale: 2.50,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'cube', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+#+Title: Getting Started with Docker
+#+Author: Muneeb Shaikh
+#+Email: @nixmaniack
+
+#+OPTIONS: reveal_center:t reveal_progress:t reveal_history:nil reveal_control:t
+#+OPTIONS: reveal_mathjax:t reveal_rolling_links:t reveal_keyboard:t reveal_overview:t num:nil
+#+OPTIONS: reveal_width:1200 reveal_height:800
+#+OPTIONS: toc:1
+#+REVEAL_MARGIN: 0.1
+#+REVEAL_MIN_SCALE: 0.5
+#+REVEAL_MAX_SCALE: 2.5
+#+REVEAL_TRANS: cube
+#+REVEAL_THEME: night
+#+REVEAL_HLEVEL: 2
+#+REVEAL_HEAD_PREAMBLE: <meta name="description" content="Getting Started with Docker">
+#+REVEAL_POSTAMBLE: <p> Created by Muneeb. </p>
+#+REVEAL_PLUGINS: (markdown notes)
+#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0
+#+REVEAL_ROOT: file:///Users/muneeb/Code/Misc/reveal.js
+
+* Brief Introduction to Docker
+** What is Docker?
+   #+BEGIN_NOTES
+   Docker Engine is a tool that allows developers, sys-admins etc. to easily
+   deploy their applications in a sandbox (called containers) to run on the host
+   operating system i.e. Linux. The key benefit of Docker Engine is that it
+   allows users to package an application with all of its dependencies into a
+   standardized unit for software development. Unlike virtual machines,
+   containers do not have the overhead of a full operating system and hence
+   enable more efficient usage of the underlying system and resources.
+   #+END_NOTES
+
+** What are containers?
+   #+BEGIN_NOTES
+   The industry standard today is to use Virtual Machines (VMs) to run software
+   applications. VMs run applications inside a guest Operating System, which
+   runs on virtual hardware powered by the server’s host OS.
+
+   VMs are great at providing full operating system isolation for applications:
+   there are very few ways a problem in the host operating system can affect the
+   software running in the guest operating system, and vice-versa. But this
+   isolation comes at great cost — the computational overhead spent virtualizing
+   hardware for a guest OS to use is substantial.
+
+   Containers take a different approach: by leveraging the low-level mechanics
+   of the host operating system, containers provide most of the isolation of
+   virtual machines at a fraction of the computing power.
+
+   #+END_NOTES
+
+** What will this tutorial teach me?
+   #+BEGIN_NOTES
+   This tutorial aims to be the one-stop shop for getting your hands dirty with
+   Docker. Apart from demystifying the Docker landscape, it'll give you hands-on
+   experience with building and deploying your own webapps. You'll quickly build
+   a multi-container voting app using multiple languages. Even if you have no
+   prior experience with deployments, this tutorial should be all you need to
+   get started.
+   #+END_NOTES
+
+* Playing with Alpine
+  #+BEGIN_NOTES
+  Now that you have everything setup, it's time to get our hands dirty. In this
+  section, you are going to run a Alpine Linux container (a lightweight linux
+  distribution) on our system and get a taste of the docker run command.
+
+  #+END_NOTES
+
+  #+BEGIN_SRC bash
+  $ docker pull alpine
+
+  $ docker images
+  REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE
+  python                            2.7                 e4a554df875e        8 days ago          676.8 MB
+  mhart/alpine-node                 latest              d7e82cd9fae1        9 days ago          37.41 MB
+  python                            2.7-alpine          dd22f748f304        13 days ago         72.59 MB
+  seqvence/static-site              latest              f589ccde7957        2 weeks ago         190.5 MB
+  manomarks/worker                  latest              80ac8879211a        2 weeks ago         184.5 MB
+  postgres                          9.4                 25add771b79e        2 weeks ago         263.6 MB
+  centos                            latest              d0e7f81ca65c        4 weeks ago         196.6 MB
+  redis                             alpine              50405530a7e5        4 weeks ago         15.95 MB
+  alpine                            latest              70c557e50ed6        4 weeks ago         4.794 MB
+  nginx                             latest              fb7fe53bd952        12 weeks ago        133.8 MB
+  centos                            7.2.1511            38ea04e19303        3 months ago        194.6 MB
+  fedora                            latest              7f514965bc71        4 months ago        204 MB
+  ubuntu                            latest              4b1e42b414f6        4 months ago        187.9 MB
+  hello-world                       latest              690ed74de00f        5 months ago        960 B
+  cirros                            latest              050a75127733        5 months ago        7.694 MB
+  #+END_SRC
+
+** Docker Run
+
+   #+BEGIN_SRC bash
+   $ docker run alpine ls -l
+   total 48
+   drwxr-xr-x    2 root     root          4096 Mar  2 16:20 bin
+   drwxr-xr-x    5 root     root           360 Mar 18 09:47 dev
+   drwxr-xr-x   13 root     root          4096 Mar 18 09:47 etc
+   drwxr-xr-x    2 root     root          4096 Mar  2 16:20 home
+   drwxr-xr-x    5 root     root          4096 Mar  2 16:20 lib
+   ......
+   ......
+
+   $ docker run alpine echo "hello from alpine"
+   hello from alpine
+
+   $ docker run alpine uptime
+   00:16:48 up  1:48,  0 users,  load average: 0.00, 0.01, 0.04
+
+   $ docker run alpine /bin/sh
+
+   $ docker ps
+
+   $ docker run -it alpine /bin/sh
+   #+END_SRC
+
+** Keywords, Terminology
+
+   - Images :: The Filesystem and configuration of our application which are
+        used to create containers. To find out more about a Docker image, run
+        docker inspect alpine. In the demo above, you used the docker pull
+        command to download the alpine image. When you executed the command
+        docker run hello-world, it also did a docker pull behind the scenes to
+        download the hello-world image.
+   - Containers :: Created using Docker images and run the actual application.
+        You created a container using docker run which you did using the alpine
+        image that you downloaded. A list of running containers can be seen
+        using the docker ps command.
+
+   #+REVEAL: split
+
+   - Docker daemon :: The background service running on the host that manages
+        building, running and distributing Docker containers.
+   - Docker client :: The command line tool that allows the user to interact
+        with the Docker daemon.
+   - Docker Hub :: A registry of Docker images. You can think of the registry as
+        a directory of all available Docker images. You'll be using this later
+        in this tutorial.
+
+* Webapps with Docker
+** Static Sites
+   #+BEGIN_EXAMPLE
+   $ docker run --name static-site -e AUTHOR="Your Name" -d -P seqvence/static-site
+   e61d12292d69556eabe2a44c16cbd54486b2527e2ce4f95438e504afb7b02810
+
+   $ docker port static-site
+   443/tcp -> 0.0.0.0:32772
+   80/tcp -> 0.0.0.0:32773
+
+   $ docker-machine ip default # for mac/windows
+   192.168.99.100
+
+
+   #+END_EXAMPLE
+** Docker Images
+
+   - Base Image :: OS Images, No parent
+   - Child Images :: Built on base images
+
+
+   - Official vs User
+
+** Our First Image
+
+   Our goal in this section will be to create an image that sandboxes a small
+   Flask application
+
+   - Dockerfile :: a text-file that contains a list of commands that the Docker
+        daemon calls while creating an image. It is simple way to automate the
+        image creation process.
+   - app.py ::
+   - requirements.txt ::
+   - templates/index.html ::
+
+*** Dockerfile
+    #+BEGIN_EXAMPLE
+    # our base image
+    FROM alpine:latest
+
+    # Install python and pip
+    RUN apk add --update py-pip
+
+    # install Python modules needed by the Python app
+    COPY requirements.txt /usr/src/app/
+    RUN pip install --no-cache-dir -r /usr/src/app/requirements.txt
+
+    # copy files required for the app to run
+    COPY app.py /usr/src/app/
+    COPY templates/index.html /usr/src/app/templates/
+
+    # tell the port number the container should expose
+    EXPOSE 5000
+
+    # run the application
+    CMD ["python", "/usr/src/app/app.py"]
+    #+END_EXAMPLE
+** Build image
+   #+BEGIN_EXAMPLE
+   $ docker build -t <YOUR_USERNAME>/myfirstapp .
+   Sending build context to Docker daemon 9.728 kB
+   Step 1 : FROM alpine:latest
+   ---> 0d81fc72e790
+   ...
+   ...
+   Step 8 : CMD python /usr/src/app/app.py
+   ---> Running in 78e324d26576
+   ---> 2f7357a0805d
+   Removing intermediate container 78e324d26576
+   Successfully built 2f7357a0805d
+   #+END_EXAMPLE
+** Run Container
+   #+BEGIN_EXAMPLE
+   $ docker run -p 8888:5000 --name myfirstapp YOUR_USERNAME/myfirstapp
+    * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+   #+END_EXAMPLE
+* Hands On/Training
+  #+BEGIN_EXAMPLE
+  $ docker login
+
+  #+END_EXAMPLE
+** Get the voting-app
+   #+BEGIN_EXAMPLE
+   $ git clone https://github.com/docker/docker-birthday-3.git
+   #+END_EXAMPLE
+** Customize the app
+   1. Modify app.py - example-voting-app/voting-app
+   2. Modify config.json - example-voting-app/result-app/views
+   3. Running your app
+      #+BEGIN_EXAMPLE
+      $ docker-compose up -d
+      #+END_EXAMPLE
+   4. Build, tag and push images
+      #+BEGIN_EXAMPLE
+      $ docker build --no-cache -t <YOUR_DOCKER_ID>/votingapp_voting-app .
+      ...
+      $ docker build --no-cache -t <YOUR_DOCKER_ID>/votingapp_result-app .
+      ...
+      #+END_EXAMPLE
+   5. Push images to Docker Hub
+      #+BEGIN_EXAMPLE
+      $ docker push <YOUR_DOCKER_ID>/votingapp_voting-app
+      ...
+      $ docker push <YOUR_DOCKER_ID>/votingapp_result-app
+      ...
+      #+END_EXAMPLE
+   6. Confirm your completion
+
+* Next Steps: Docker Birthday #3 App Challenge
+* Questions?
+* Thanks!
+
+Follow me [[https://twitter.com/nixmaniack][@nixmaniack]]
